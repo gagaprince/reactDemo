@@ -3,32 +3,18 @@ var LabelText = require('./labelText');
 
 
 var TextGroup = React.createClass({
-    getInitialState: function() {
-        var data = [];
-        var propsData = this.props.data;
-        var dataItem = propsData[0];
-        for(var i=0;dataItem;dataItem = propsData[++i]){
-            data.push({value:dataItem["value"]||""});
-        }
-        return {data:data};
-    },
     triggerReset:function(){
-        this.setState(this.getInitialState());
+        var _this = this;
+        this.props.data.map(function(item,index){
+            _this.refs["text"+index].reset();
+        });
     },
     render:function(){
         var _this = this;
         var texts = this.props.data.map(function(textItem,index){
-            textItem.onValueChange = (function(index){
-                return function(value){
-                    textItem.vaule=value;
-                    var data = _this.state.data;
-                    data[index].value = value;
-                    _this.setState({data:data});
-                }
-            })(index);
-            var value = _this.state.data[index].value;
+            var refvalue = "text"+index;
             return (
-                <LabelText item={textItem} value={value}/>
+                <LabelText ref={refvalue} item={textItem}/>
                 );
         });
         return (

@@ -20570,10 +20570,12 @@
 	        var item = this.props.item;
 	        return {value:item.value};
 	    },
-
+	    reset:function(){
+	        this.setState(this.getInitialState());
+	    },
 	    render:function(){
 	        var item = this.props.item;
-	        var value = this.props.value;
+	        var value = this.state.value;
 	        return (
 	            React.createElement("div", {className: "timeitem"}, React.createElement("span", {className: "lb"}, item.label), React.createElement("span", {className: "lbi"}, React.createElement("input", {type: "text", value: value, placeholder: item.placeholder, className: "money-input", day: item.day, onChange: this.handleChange})))
 	            );
@@ -20582,7 +20584,7 @@
 	        var item = this.props.item;
 	        var value = e.target.value;
 	        console.log(item.label+"的值改变为："+e.target.value);
-	        item.onValueChange(value);
+	        this.setState({value:value});
 	//        item.value = value;
 	    }
 	});
@@ -20598,32 +20600,18 @@
 
 
 	var TextGroup = React.createClass({displayName: "TextGroup",
-	    getInitialState: function() {
-	        var data = [];
-	        var propsData = this.props.data;
-	        var dataItem = propsData[0];
-	        for(var i=0;dataItem;dataItem = propsData[++i]){
-	            data.push({value:dataItem["value"]||""});
-	        }
-	        return {data:data};
-	    },
 	    triggerReset:function(){
-	        this.setState(this.getInitialState());
+	        var _this = this;
+	        this.props.data.map(function(item,index){
+	            _this.refs["text"+index].reset();
+	        });
 	    },
 	    render:function(){
 	        var _this = this;
 	        var texts = this.props.data.map(function(textItem,index){
-	            textItem.onValueChange = (function(index){
-	                return function(value){
-	                    textItem.vaule=value;
-	                    var data = _this.state.data;
-	                    data[index].value = value;
-	                    _this.setState({data:data});
-	                }
-	            })(index);
-	            var value = _this.state.data[index].value;
+	            var refvalue = "text"+index;
 	            return (
-	                React.createElement(LabelText, {item: textItem, value: value})
+	                React.createElement(LabelText, {ref: refvalue, item: textItem})
 	                );
 	        });
 	        return (
