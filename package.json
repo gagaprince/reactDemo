@@ -1,0 +1,13 @@
+{
+  "name": "reactDemo",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+      "react":"0.13.3",
+      "jsx-loader":"0.13.2",
+      "webpack":"1.12.13"
+  }
+}
