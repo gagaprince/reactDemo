@@ -9,6 +9,15 @@ var TextGroup = React.createClass({
             _this.refs["text"+index].reset();
         });
     },
+    getCurrentData:function(){
+        var _this = this;
+        var data = [];
+        this.props.data.map(function(item,index){
+            var dataItem = _this.refs["text"+index].getData();
+            data.push(dataItem);
+        });
+        return data;
+    },
     render:function(){
         var _this = this;
         var texts = this.props.data.map(function(textItem,index){

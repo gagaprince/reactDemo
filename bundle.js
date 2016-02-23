@@ -55,6 +55,8 @@
 
 	var TextGroup = __webpack_require__(160);
 
+	var SimpleText = __webpack_require__(161);
+
 	//console.log(SimpleBtn)
 	//var myBody = <SimpleBtn btnName={"hello"}/>;
 
@@ -103,10 +105,59 @@
 	var texts = React.createElement(TextGroup, {data: data})
 	var textsReactDom = React.render(texts, document.getElementById('timeTransform'));
 
+	function calresultfirst(currentData){
+	    var dataItem = currentData[0];
+	    var total = 0;
+	    for(var i=0;dataItem;dataItem=currentData[++i]){
+	        var moneyStr = dataItem["value"];
+	        if(!moneyStr||moneyStr=="")moneyStr=0;
+	        var money = parseFloat(moneyStr);
+	        var day = parseInt(dataItem["day"]);
+	        if(day>0)
+	            total += money/360*day;
+	    }
+
+	    if(total<100000){
+	        return 0;
+	    }
+	    if(total<600000){
+	        return 0.0015*total- 150;
+	    }
+	    if(total<1100000){
+	        return 0.002*total - 450;
+	    }
+	    return 0.0025*total - 1000;
+	}
+
+	function calresultScecond(currentData){
+	    var dataItem = currentData[0];
+	    for(var i=0;dataItem;dataItem=currentData[++i]){
+	        var moneyStr = dataItem["value"];
+	        if(!moneyStr||moneyStr=="")moneyStr=0;
+	        var money = parseFloat(moneyStr);
+	        var day = parseInt(dataItem["day"]);
+	        if(day<0)
+	            return money * 0.0007;
+	    }
+	    return 0;
+	}
+
+	function calresult(currentData){
+	    var t1 = calresultfirst(currentData);
+	    var t2 = calresultScecond(currentData);
+	    console.log(t1);
+	    console.log(t2);
+	    return t1+t2;
+	}
+
 	var btnData = [
 	    {
 	        click:function(e){
-	            console.log(data);
+	            var currentData = textsReactDom.getCurrentData();
+	            var money = calresult(currentData);
+	            console.log(money);
+	            resultReactDom.setProps({value:money});
+	            console.log(currentData)
 	        },
 	        type:"simple",
 	        btnName:"开始计算"
@@ -123,6 +174,9 @@
 	];
 	var btns = React.createElement(BtnGroup, {data: btnData})
 	React.render(btns, document.getElementById('btnGroup'));
+
+	var resultDom = React.createElement(SimpleText, null)
+	var resultReactDom = React.render(resultDom,document.getElementById('resultText'));
 
 /***/ },
 /* 1 */
@@ -20570,6 +20624,12 @@
 	        var item = this.props.item;
 	        return {value:item.value};
 	    },
+	    getData:function(){
+	        var value = this.state.value;
+	        var item = this.props.item;
+	        var day = item["day"];
+	        return {day:day,value:value};
+	    },
 	    reset:function(){
 	        this.setState(this.getInitialState());
 	    },
@@ -20606,6 +20666,15 @@
 	            _this.refs["text"+index].reset();
 	        });
 	    },
+	    getCurrentData:function(){
+	        var _this = this;
+	        var data = [];
+	        this.props.data.map(function(item,index){
+	            var dataItem = _this.refs["text"+index].getData();
+	            data.push(dataItem);
+	        });
+	        return data;
+	    },
 	    render:function(){
 	        var _this = this;
 	        var texts = this.props.data.map(function(textItem,index){
@@ -20620,6 +20689,28 @@
 	    }
 	});
 	module.exports = TextGroup;
+
+/***/ },
+/* 161 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var SimpleText = React.createClass({displayName: "SimpleText",
+	//    getInitialState:function(){
+	//        return {value:this.props.value}
+	//    },
+	//    setValue:function(){
+	//
+	//    },
+	    render:function(){
+	        var value = this.props.value;
+	        return (
+	            React.createElement("span", {className: "result-text"}, value)
+	            );
+	    }
+	});
+
+	module.exports = SimpleText;
 
 /***/ }
 /******/ ]);

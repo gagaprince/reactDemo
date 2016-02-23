@@ -6,6 +6,12 @@ var LabelText = React.createClass({
         var item = this.props.item;
         return {value:item.value};
     },
+    getData:function(){
+        var value = this.state.value;
+        var item = this.props.item;
+        var day = item["day"];
+        return {day:day,value:value};
+    },
     reset:function(){
         this.setState(this.getInitialState());
     },
